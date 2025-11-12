@@ -2,9 +2,9 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgree:15-alpine
+    image: postgres:15-alpine
     container_name: livraria_postgres
-    enviroment:
+    environment:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=livraria_dev 
