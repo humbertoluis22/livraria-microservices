@@ -1,6 +1,8 @@
+from typing import Any
 from uuid import UUID
+from sqlalchemy import Select
 from sqlalchemy.orm import Session
-from shared.config.database import get_session as default_session
+from usuario.shared.config.database import get_session as default_session
 
 class BaseRepository:
     def __init__(self,model):
@@ -17,14 +19,20 @@ class BaseRepository:
         with self.get_session() as session:
             session.add(instance)
             session.commit()
+    
+
+    def get_all(self):
+        with self.get_session() as session:
+            objs = session.query(self.model).all()
+            return objs
+    
 
     def get_attribute_by_uuid(self,uuid:UUID):
         with self.get_session() as session:
             obj = session.get(self.model,str(uuid))
-            if obj:
-                return getattr(obj)   
-
-    def update_attribute_by_id(self,uuid:UUID,column_name:str,value:str):
+            return obj
+        
+    def update_attribute_by_id(self,uuid:UUID,column_name:str,value:Any):
         if not hasattr(self.model,column_name):
             print(f'tentativa de atualizar atributo inexistente {column_name} no modelo {self.model}')
 

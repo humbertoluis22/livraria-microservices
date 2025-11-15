@@ -4,9 +4,10 @@ from http import HTTPStatus
 
 from fastapi import Request
 from fastapi.responses import JSONResponse
-
+import logging  
 
 # logger = logger.getChild(__name__)
+logger = logging.getLogger(__name__)
 
 # Rotas que não devem ser interceptadas
 EXCLUDED_PATHS = ['/docs', '/redoc', '/openapi.json', '/favicon.ico']
@@ -46,7 +47,7 @@ async def response_standardize_middleware(request: Request, call_next):
             f'Conflito gerado na requisição: {request.method} '
             f'{request.url.path} - Erro: {ve}'
         )
-
+        logger.warning(error_msg)
         return JSONResponse(
             status_code=HTTPStatus.CONFLICT,
             content={
@@ -62,6 +63,7 @@ async def response_standardize_middleware(request: Request, call_next):
             f'Erro interno inesperado na requisição: {request.method} '
             f'{request.url.path} - Erro: {ex}'
         )
+        logger.error(error_msg)
         return JSONResponse(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
             content={
